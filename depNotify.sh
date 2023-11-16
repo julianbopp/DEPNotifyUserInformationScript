@@ -218,12 +218,6 @@
     DEP_NOTIFY_PROCESS=$(pgrep -l "DEPNotify" | cut -d " " -f1)
   done
 
-# Using Caffeinate binary to keep the computer awake if enabled
-  if [ "$NO_SLEEP" = true ]; then
-    echo "$(date "+%a %h %d %H:%M:%S"): Caffeinating DEP Notify process. Process ID: $DEP_NOTIFY_PROCESS" >> "$DEP_NOTIFY_DEBUG"
-    caffeinate -disu -w "$DEP_NOTIFY_PROCESS"&
-  fi
-
 # Adding an alert prompt to let admins know that the script is in testing mode
   if [ "$TESTING_MODE" = true ]; then
     echo "Command: Alert: DEP Notify is in TESTING_MODE. Script will not run Policies or other commands that make change to this computer."  >> "$DEP_NOTIFY_LOG"
