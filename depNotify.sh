@@ -205,9 +205,9 @@
 
 # Opening the app after initial configuration
   if [ "$FULLSCREEN" = true ]; then
-    launchctl asuser $CURRENT_USER_ID open -a "$DEP_NOTIFY_APP" --args -path "$DEP_NOTIFY_LOG" -jamf -fullScreen
+    launchctl asuser $CURRENT_USER_ID open -a "$DEP_NOTIFY_APP" --args -path "$DEP_NOTIFY_LOG" -jamfmunki -fullScreen
   elif [ "$FULLSCREEN" = false ]; then
-    launchctl asuser $CURRENT_USER_ID open -a "$DEP_NOTIFY_APP" --args -path "$DEP_NOTIFY_LOG" -jamf
+    launchctl asuser $CURRENT_USER_ID open -a "$DEP_NOTIFY_APP" --args -path "$DEP_NOTIFY_LOG" -jamfmunki
   fi
 
 # Grabbing the DEP Notify Process ID for use later
