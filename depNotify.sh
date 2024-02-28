@@ -124,8 +124,7 @@
       if [ -f "$DEP_NOTIFY_LOG" ]; then rm "$DEP_NOTIFY_LOG"; fi
       if [ -f "$DEP_NOTIFY_DONE" ]; then rm "$DEP_NOTIFY_DONE"; fi
       if [ -f "$DEP_NOTIFY_DEBUG" ]; then rm "$DEP_NOTIFY_DEBUG"; fi
-    # Setting Quit Key set to command + control + x (Testing Mode Only)
-      echo "Command: QuitKey: x" >> "$DEP_NOTIFY_LOG"
+      sleep 0.1
   fi
 
 # Validating true/false flags
@@ -171,6 +170,9 @@
     sleep 5
     exit 1
   fi
+
+# Setting Quit Key set to command + control + x
+  echo "Command: QuitKey: x" >> "$DEP_NOTIFY_LOG"
 
 # Setting custom image if specified
   if [ "$BANNER_IMAGE_PATH" != "" ]; then  echo "Command: Image: $BANNER_IMAGE_PATH" >> "$DEP_NOTIFY_LOG"; fi
