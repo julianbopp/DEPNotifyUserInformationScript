@@ -28,6 +28,10 @@
 	
 # Update the variable below replacing "email helpdesk@company.com" with the actual plaintext instructions for your organization. Example "call 555-1212" or "email helpdesk@company.com"
   SUPPORT_CONTACT_DETAILS="email support-its@unibas.ch"
+
+# Onboarding Video URLs
+  VIDEO_URL_DE="WTfpzZzUTw8"
+  VIDEO_URL_EN="A-eGjyG5SBk"
   
 # Paragraph text that will display under the main heading. For a new line, use \n
 # If this variable is left blank, the generic message will appear. Leave single
@@ -110,6 +114,19 @@
 #########################################################################################
 #########################################################################################
 
+# https://developer.apple.com/library/archive/documentation/LanguagesUtilities/Conceptual/MacAutomationScriptingGuide/DisplayNotifications.html
+# Is user using en or de locale? Use english as default
+  userlang=$(defaults read -g AppleLocale) 
+  userlang=${userlang:0:2}
+
+# Display popup with title and description
+  if [ "$userlang" = "de" ]; then
+	  VIDEO_URL = $VIDEO_URL_DE
+  else
+	  VIDEO_URL = $VIDEO_URL_EN
+  fi
+
+
 # Variables for File Paths
   JAMF_BINARY="/usr/local/bin/jamf"
   FDE_SETUP_BINARY="/usr/bin/fdesetup"
@@ -126,6 +143,7 @@
       if [ -f "$DEP_NOTIFY_DEBUG" ]; then rm "$DEP_NOTIFY_DEBUG"; fi
       sleep 0.1
   fi
+ 
 
 # Validating true/false flags
   if [ "$TESTING_MODE" != true ] && [ "$TESTING_MODE" != false ]; then
@@ -137,6 +155,7 @@
     exit 1
   fi
 
+
 # Run DEP Notify will run after Apple Setup Assistant
   SETUP_ASSISTANT_PROCESS=$(pgrep -l "Setup Assistant")
   until [ "$SETUP_ASSISTANT_PROCESS" = "" ]; do
@@ -144,6 +163,7 @@
     sleep 1
     SETUP_ASSISTANT_PROCESS=$(pgrep -l "Setup Assistant")
   done
+
 
 # Checking to see if the Finder is running now before continuing. This can help
 # in scenarios where an end user is not configuring the device.
@@ -154,10 +174,12 @@
     FINDER_PROCESS=$(pgrep -l "Finder")
   done
 
+
 # After the Apple Setup completed. Now safe to grab the current user and user ID
   CURRENT_USER=$(/usr/bin/stat -f "%Su" /dev/console)
   CURRENT_USER_ID=$(id -u $CURRENT_USER)
   echo "$(date "+%a %h %d %H:%M:%S"): Current user set to $CURRENT_USER (id: $CURRENT_USER_ID)." >> "$DEP_NOTIFY_DEBUG"
+
  
 # Adding Check and Warning if Testing Mode is off and BOM files exist
   if [[ ( -f "$DEP_NOTIFY_LOG" || -f "$DEP_NOTIFY_DONE" ) && "$TESTING_MODE" = false ]]; then
@@ -171,14 +193,17 @@
     exit 1
   fi
 
+
 # Setting Quit Key set to command + control + x
   echo "Command: QuitKey: x" >> "$DEP_NOTIFY_LOG"
 
 # Setting custom image if specified
   if [ "$BANNER_IMAGE_PATH" != "" ]; then  echo "Command: Image: $BANNER_IMAGE_PATH" >> "$DEP_NOTIFY_LOG"; fi
 
+
 # Setting custom title if specified
   if [ "$BANNER_TITLE" != "" ]; then echo "Command: MainTitle: $BANNER_TITLE" >> "$DEP_NOTIFY_LOG"; fi
+
 
 # Setting custom main text if specified
   if [ "$MAIN_TEXT" != "" ]; then echo "Command: MainText: $MAIN_TEXT" >> "$DEP_NOTIFY_LOG"; fi
@@ -186,9 +211,9 @@
 
 # Opening the app after initial configuration
   if [ "$FULLSCREEN" = true ]; then
-    launchctl asuser $CURRENT_USER_ID open -a "$DEP_NOTIFY_APP" --args -path "$DEP_NOTIFY_LOG" -jamfmunki -fullScreen
+    launchctl asuser $CURRENT_USER_ID open -a "$DEP_NOTIFY_APP" --args -path "$DEP_NOTIFY_LOG" -fullScreen
   elif [ "$FULLSCREEN" = false ]; then
-    launchctl asuser $CURRENT_USER_ID open -a "$DEP_NOTIFY_APP" --args -path "$DEP_NOTIFY_LOG" -jamfmunki
+    launchctl asuser $CURRENT_USER_ID open -a "$DEP_NOTIFY_APP" --args -path "$DEP_NOTIFY_LOG"
   fi
 
 # Grabbing the DEP Notify Process ID for use later
@@ -204,9 +229,12 @@
     echo "Command: Alert: DEP Notify is in TESTING_MODE. Script will not run Policies or other commands that make change to this computer."  >> "$DEP_NOTIFY_LOG"
   fi
 
+# Display video
+  echo "Command: YouTube: $VIDEO_URL" >> "$DEP_NOTIFY_LOG"
+
 # Adding nice text and a brief pause for prettiness
   echo "Status: $INITAL_START_STATUS" >> "$DEP_NOTIFY_LOG"
-  sleep 5
+  #sleep 5
 
 
 exit 0
