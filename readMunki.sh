@@ -12,7 +12,6 @@ echo "Running managedsoftwareupdate"
 
 tail -n 1 -f "$MUNKI_MSU_LOG" | while read LOGLINE
 do
-	echo "HELLO" >> "Users/test/test.txt"
     if ([[ "${LOGLINE}" == *"Installing"* ]] || [[ "${LOGLINE}" == *"Downloading"* ]]) && [[ "${LOGLINE}" != *" at "* ]] && [[ "${LOGLINE}" != *" from "* ]]; then
         echo "Status: ${LOGLINE:27}" >> $DEP_NOTIFY_LOG
     fi
